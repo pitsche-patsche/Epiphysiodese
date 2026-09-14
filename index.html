@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Epiphyseodese-Timing nach Paley</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#16202B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Epiphyseodese">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F8F9;
+  --grid:#DCE4E8;
+  --grid-major:#C3D0D7;
+  --ink:#16202B;
+  --muted:#5E7180;
+  --signal:#0F766E;
+  --signal-soft:#0F766E1F;
+  --alert:#A8341F;
+  --rule:#C9D5DB;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  font-variant-numeric:tabular-nums;
+  padding:20px 16px 56px;
+  max-width:760px;
+  margin:0 auto;
+}
+h1{
+  font-size:21px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0 0 2px;
+}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 22px}
+
+fieldset{border:none;padding:0;margin:0 0 20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select{
+  width:100%;
+  font:inherit;
+  font-variant-numeric:tabular-nums;
+  padding:9px 10px;
+  border:1px solid var(--rule);
+  border-radius:3px;
+  background:#fff;
+  color:var(--ink);
+}
+input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:var(--signal)}
+
+.modes{
+  display:flex;
+  border:1px solid var(--rule);
+  border-radius:3px;
+  overflow:hidden;
+  background:#fff;
+  margin-bottom:14px;
+  width:fit-content;
+}
+.modes button{
+  font:inherit;
+  font-size:13.5px;
+  padding:7px 15px;
+  border:none;
+  background:none;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+}
+.modes button[aria-pressed="true"]{
+  color:var(--ink);
+  border-bottom-color:var(--signal);
+  font-weight:500;
+}
+.modes button:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
+.derived{
+  grid-column:1/-1;
+  font-size:13.5px;
+  color:var(--muted);
+  padding:2px 0 0;
+}
+.derived b{color:var(--ink);font-weight:500}
+.derived.bad b{color:var(--alert)}
+[hidden]{display:none !important}
+.opdate{
+  font-size:15px;
+  color:var(--ink);
+  margin-top:2px;
+}
+.opdate b{font-weight:600}
+
+.readout{
+  border-top:2px solid var(--ink);
+  border-bottom:1px solid var(--rule);
+  padding:18px 0 16px;
+  margin:22px 0 4px;
+}
+.verdict{font-size:15px;line-height:1.45}
+.age-big{
+  font-size:44px;
+  font-weight:600;
+  letter-spacing:-0.02em;
+  line-height:1.05;
+  color:var(--signal);
+  display:block;
+  margin:2px 0 6px;
+}
+.age-big.blocked{color:var(--alert)}
+.window{font-size:14px;color:var(--muted)}
+
+svg{width:100%;height:auto;display:block;margin:8px 0 4px;overflow:visible}
+.axis-label{font-size:11px;fill:var(--muted)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+th{
+  text-align:right;font-weight:500;color:var(--muted);
+  padding:6px 8px;border-bottom:1px solid var(--ink);font-size:12.5px;
+}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right}
+tr.hit td{background:var(--signal-soft);font-weight:500}
+
+.note{
+  font-size:12.5px;
+  color:var(--muted);
+  line-height:1.55;
+  border-left:2px solid var(--rule);
+  padding-left:12px;
+  margin-top:26px;
+}
+.note b{color:var(--ink);font-weight:500}
+.flag{
+  font-size:13px;
+  color:var(--alert);
+  border-left:2px solid var(--alert);
+  padding-left:12px;
+  margin-top:14px;
+}
+h2{font-size:14px;font-weight:600;margin:30px 0 2px}
+@media(max-width:480px){
+  .grid2{grid-template-columns:1fr}
+  .age-big{font-size:38px}
+}
+</style>
+</head>
+<body>
+
+<h1>Epiphyseodese-Timing</h1>
+<p class="sub">Wann muss die komplette Epiphyseodese von distalem Femur und proximaler Tibia erfolgen, um eine bestimmte Endgröße zu erreichen? Multiplier-Methode nach Paley.</p>
+
+<fieldset>
+  <div class="modes" role="group" aria-label="Wie soll das Alter bestimmt werden?">
+    <button type="button" id="modeAge" aria-pressed="true">Alter eingeben</button>
+    <button type="button" id="modeDob" aria-pressed="false">Aus Geburtsdatum</button>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <label for="sex">Geschlecht</label>
+      <select id="sex"><option value="m" selected>männlich</option><option value="w">weiblich</option></select>
+    </div>
+    <div id="wrapAge">
+      <label for="age">Aktuelles Alter (Jahre)</label>
+      <input id="age" type="number" step="0.1" min="6" max="17" value="11.0">
+    </div>
+    <div id="wrapDob" hidden>
+      <label for="dob">Geburtsdatum</label>
+      <input id="dob" type="date">
+    </div>
+    <div id="wrapExam" hidden>
+      <label for="exam">Untersuchungsdatum</label>
+      <input id="exam" type="date">
+    </div>
+    <div class="derived" id="derived" hidden></div>
+    <div>
+      <label for="height">Aktuelle Körpergröße (cm)</label>
+      <input id="height" type="number" step="0.5" min="80" max="220" value="163">
+    </div>
+    <div>
+      <label for="target">Ziel-Endgröße (cm)</label>
+      <input id="target" type="number" step="0.5" min="120" max="230" value="195">
+    </div>
+    <div>
+      <label for="sd">Unsicherheit der Prognose ± (cm)</label>
+      <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
+    </div>
+    <div>
+      <label for="minage">Frühester Eingriff (Jahre)</label>
+      <input id="minage" type="number" step="0.5" min="8" max="14" value="10">
+    </div>
+  </div>
+</fieldset>
+
+<div class="readout">
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<svg id="chart" viewBox="0 0 380 230" role="img" aria-labelledby="charttitle">
+  <title id="charttitle">Erreichbare Höhenreduktion in Abhängigkeit vom Operationsalter</title>
+</svg>
+
+<h2>Erreichbare Reduktion nach Operationsalter</h2>
+<table id="tbl">
+  <thead><tr><th>Alter</th><th>Größe</th><th>dist. Femur</th><th>prox. Tibia</th><th>Summe</th><th>Endgröße</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+<div id="flags"></div>
+
+<div class="note">
+<b>Modell.</b> Restwachstum je Segment = Länge × (M − 1). Die distale Femurfuge trägt rund 71 % des Femurwachstums, die proximale Tibiafuge rund 57 % des Tibiawachstums. Segmentlängen werden aus der Körpergröße geschätzt (Femur 27 %, Tibia 22 % der Stehhöhe).
+<br><br>
+<b>Die Multiplikatortabellen im Quelltext sind Näherungswerte</b> und vor klinischem Einsatz gegen die Originalpublikation (Paley et al., <i>J Pediatr Orthop</i> 2004) zu ersetzen. Sie stehen gebündelt am Anfang des Skripts.
+<br><br>
+<b>Genauigkeit.</b> Die altersbasierten Multiplikatoren sind vor dem Wachstumsschub am zuverlässigsten und verlieren genau in der Entscheidungsphase an Präzision — maximale SD des Vorhersagefehlers 7,0 cm (Jungen, 13,5 J.) bzw. 5,6 cm (Mädchen, 11,5 J.). Für Extremitätenlängen 3,9 bzw. 3,2 cm. Ab Beginn des Wachstumsschubs ist das Knochenalter dem chronologischen Alter überlegen; dann statt des Lebensalters das Skelettalter eintragen.
+<br><br>
+Rechenhilfe, kein Ersatz für Ganzbeinaufnahme, Skelettalterbestimmung und klinische Beurteilung.
+</div>
+
+<script>
+// ─── Multiplikatortabellen (NÄHERUNGSWERTE — vor Einsatz verifizieren) ───────
+const M = {
+  m: {
+    ht:{9:1.404,9.5:1.356,10:1.310,10.5:1.278,11:1.246,11.5:1.214,12:1.181,12.5:1.146,13:1.110,13.5:1.075,14:1.047,14.5:1.028,15:1.017,15.5:1.010,16:1.006,16.5:1.003,17:1.002,17.5:1.001,18:1.000},
+    fe:{9:1.372,9.5:1.330,10:1.290,10.5:1.255,11:1.220,11.5:1.185,12:1.150,12.5:1.115,13:1.083,13.5:1.055,14:1.033,14.5:1.019,15:1.011,15.5:1.006,16:1.003,16.5:1.001,17:1.000,17.5:1.000,18:1.000},
+    ti:{9:1.348,9.5:1.310,10:1.272,10.5:1.240,11:1.208,11.5:1.175,12:1.142,12.5:1.108,13:1.078,13.5:1.051,14:1.030,14.5:1.017,15:1.009,15.5:1.005,16:1.002,16.5:1.001,17:1.000,17.5:1.000,18:1.000},
+    end:17.0
+  },
+  w: {
+    ht:{9:1.263,9.5:1.225,10:1.190,10.5:1.161,11:1.132,11.5:1.104,12:1.077,12.5:1.054,13:1.035,13.5:1.022,14:1.013,14.5:1.008,15:1.005,15.5:1.003,16:1.001,16.5:1.000,17:1.000,17.5:1.000,18:1.000},
+    fe:{9:1.240,9.5:1.205,10:1.170,10.5:1.145,11:1.118,11.5:1.090,12:1.063,12.5:1.042,13:1.026,13.5:1.015,14:1.008,14.5:1.004,15:1.002,15.5:1.001,16:1.000,16.5:1.000,17:1.000,17.5:1.000,18:1.000},
+    ti:{9:1.222,9.5:1.190,10:1.158,10.5:1.134,11:1.109,11.5:1.083,12:1.058,12.5:1.038,13:1.023,13.5:1.013,14:1.007,14.5:1.003,15:1.001,15.5:1.000,16:1.000,16.5:1.000,17:1.000,17.5:1.000,18:1.000},
+    end:15.5
+  }
+};
+const F_FEMUR = 0.27, F_TIBIA = 0.22;      // Segmentanteil an der Stehhöhe
+const C_DF = 0.71, C_PT = 0.57;            // Fugenanteil am Segmentwachstum
+const SITTING_RATIO = {m:0.520, w:0.525};  // Sitzhöhe / Stehhöhe, Erwachsene
+
+function interp(tbl, age){
+  const ks = Object.keys(tbl).map(Number).sort((a,b)=>a-b);
+  if(age <= ks[0]) return tbl[ks[0]];
+  if(age >= ks[ks.length-1]) return tbl[ks[ks.length-1]];
+  for(let i=0;i<ks.length-1;i++){
+    if(age >= ks[i] && age <= ks[i+1]){
+      const t = (age-ks[i])/(ks[i+1]-ks[i]);
+      return tbl[ks[i]] + t*(tbl[ks[i+1]] - tbl[ks[i]]);
+    }
+  }
+}
+
+// Erreichbare Höhenreduktion bei Epiphyseodese im Alter t
+function savings(sex, adultHt, t){
+  const d = M[sex];
+  const ht = adultHt / interp(d.ht, t);        // Körpergröße zum Zeitpunkt t
+  const dFem = F_FEMUR*ht * (interp(d.fe,t)-1) * C_DF;
+  const dTib = F_TIBIA*ht * (interp(d.ti,t)-1) * C_PT;
+  return {ht, dFem, dTib, total: dFem+dTib};
+}
+
+// Alter suchen, bei dem die Reduktion genau need beträgt (Bisektion)
+function solve(sex, adultHt, need, minAge){
+  const hi = M[sex].end;
+  if(savings(sex,adultHt,minAge).total < need) return null;   // nicht erreichbar
+  let lo = minAge, up = hi;
+  for(let i=0;i<60;i++){
+    const mid = (lo+up)/2;
+    if(savings(sex,adultHt,mid).total > need) lo = mid; else up = mid;
+  }
+  return (lo+up)/2;
+}
+
+const $ = id => document.getElementById(id);
+const inputs = ['sex','age','height','target','sd','minage','dob','exam'];
+const DAY = 86400000, YEAR = 365.2425;
+let mode = 'age';
+
+function fmtAge(a){
+  const y = Math.floor(a), mo = Math.round((a-y)*12);
+  return mo===12 ? (y+1)+" J. 0 Mon." : y+" J. "+mo+" Mon.";
+}
+function parseDate(v){
+  if(!v) return null;
+  const d = new Date(v+"T00:00:00");
+  return isNaN(d) ? null : d;
+}
+function decimalAge(dob, exam){ return (exam - dob)/DAY/YEAR; }
+function ageToDate(dob, a){ return new Date(dob.getTime() + a*YEAR*DAY); }
+function fmtDate(d){
+  return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+// Liefert das aktuelle Alter je nach Modus, oder null bei ungültiger Eingabe
+function currentAge(){
+  if(mode === 'age') return +$('age').value;
+  const dob = parseDate($('dob').value), exam = parseDate($('exam').value);
+  if(!dob || !exam || exam <= dob) return null;
+  return decimalAge(dob, exam);
+}
+
+function setMode(m){
+  mode = m;
+  $('modeAge').setAttribute('aria-pressed', m==='age');
+  $('modeDob').setAttribute('aria-pressed', m==='dob');
+  $('wrapAge').hidden  = m!=='age';
+  $('wrapDob').hidden  = m!=='dob';
+  $('wrapExam').hidden = m!=='dob';
+  $('derived').hidden  = m!=='dob';
+  run();
+}
+
+function run(){
+  const sex   = $('sex').value;
+  const dob   = parseDate($('dob').value);
+  const age0  = currentAge();
+
+  if(mode === 'dob'){
+    const exam = parseDate($('exam').value);
+    const dv = $('derived');
+    if(age0 === null){
+      dv.className = 'derived bad';
+      dv.innerHTML = 'Beide Daten eintragen; das Untersuchungsdatum muss nach dem Geburtsdatum liegen.';
+    } else {
+      dv.className = 'derived';
+      dv.innerHTML = 'Chronologisches Alter am '+fmtDate(exam)+': <b>'+fmtAge(age0)
+                   +'</b> ('+age0.toFixed(2)+' Jahre)';
+    }
+    if(age0 === null){
+      $('verdict').innerHTML = 'Warte auf ein gültiges Geburts- und Untersuchungsdatum.';
+      $('tbl').querySelector('tbody').innerHTML = '';
+      $('flags').innerHTML = '';
+      $('chart').innerHTML = '';
+      return;
+    }
+  }
+
+  const ht0   = +$('height').value;
+  const tgt   = +$('target').value;
+  const sd    = +$('sd').value;
+  const minAge= +$('minage').value;
+  const d = M[sex];
+
+  const adultHt = ht0 * interp(d.ht, age0);
+  const need = adultHt - tgt;
+  const maxSave = savings(sex, adultHt, Math.max(minAge, age0)).total;
+
+  const t   = solve(sex, adultHt, need, Math.max(minAge, age0));
+  const tHi = solve(sex, adultHt, need - sd, Math.max(minAge, age0)); // weniger nötig → später
+  const tLo = solve(sex, adultHt, need + sd, Math.max(minAge, age0)); // mehr nötig → früher
+
+  // ── Textausgabe ───────────────────────────────────────────────
+  let v = "Prognostizierte Endgröße ohne Eingriff: <b>"+adultHt.toFixed(1)+" cm</b>. "
+        + "Erforderliche Reduktion: <b>"+need.toFixed(1)+" cm</b>.";
+
+  if(need <= 0){
+    v += '<span class="age-big">—</span><span class="window">Die Zielgröße liegt bereits über der Prognose. Kein Eingriff indiziert.</span>';
+  } else if(t === null){
+    v += '<span class="age-big blocked">nicht erreichbar</span>'
+       + '<span class="window">Selbst bei Eingriff mit '+minAge.toFixed(1)+' Jahren sind nur <b>'
+       + maxSave.toFixed(1)+' cm</b> zu gewinnen. Erreichbare Endgröße: <b>'
+       + (adultHt-maxSave).toFixed(1)+' cm</b>.</span>';
+  } else {
+    v += '<span class="age-big">'+fmtAge(t)+'</span>';
+    if(mode === 'dob' && dob){
+      v += '<div class="opdate">Operationsdatum: <b>'+fmtDate(ageToDate(dob,t))+'</b></div>';
+      if(tLo && tHi) v += '<div class="window">Fenster '+fmtDate(ageToDate(dob,tLo))+' bis '
+                        + fmtDate(ageToDate(dob,tHi))+' (±'+sd+' cm Prognoseunsicherheit)</div>';
+    } else {
+      if(tLo && tHi) v += '<span class="window">Bei ±'+sd+' cm Prognoseunsicherheit: '+fmtAge(tLo)+' bis '+fmtAge(tHi)+'</span>';
+      else v += '<span class="window">Fenster bei ±'+sd+' cm Unsicherheit teilweise außerhalb des Suchbereichs.</span>';
+    }
+  }
+  $('verdict').innerHTML = v;
+
+  // ── Tabelle ───────────────────────────────────────────────────
+  const rows = [];
+  for(let a = minAge; a <= d.end + 0.001; a += 0.5) rows.push(a);
+  $('tbl').querySelector('tbody').innerHTML = rows.map(a=>{
+    const s = savings(sex, adultHt, a);
+    const hit = t!==null && Math.abs(a-t) < 0.25;
+    return '<tr class="'+(hit?'hit':'')+'"><td>'+a.toFixed(1)+'</td><td>'+s.ht.toFixed(0)
+      +'</td><td>'+s.dFem.toFixed(1)+'</td><td>'+s.dTib.toFixed(1)+'</td><td>'+s.total.toFixed(1)
+      +'</td><td>'+(adultHt-s.total).toFixed(1)+'</td></tr>';
+  }).join('');
+
+  // ── Warnhinweise ──────────────────────────────────────────────
+  let f = '';
+  if(t !== null && need > 0){
+    const r = (SITTING_RATIO[sex]*adultHt)/(adultHt-need);
+    if(r > 0.545) f += '<div class="flag">Sitzhöhen-Index steigt auf '+r.toFixed(3)
+      +' (normal ≈ '+SITTING_RATIO[sex].toFixed(3)+'). Deutliche Disproportion zwischen Rumpf und Beinen zu erwarten.</div>';
+    if(t < age0) f += '<div class="flag">Der errechnete Zeitpunkt liegt vor dem aktuellen Alter — das Fenster ist bereits überschritten.</div>';
+    if(t > d.end - 1) f += '<div class="flag">Der Zeitpunkt liegt nah am Wachstumsabschluss; das Restwachstum ist hier sehr gering und der Fehler entsprechend groß.</div>';
+  }
+  $('flags').innerHTML = f;
+
+  drawChart(sex, adultHt, need, minAge, t, tLo, tHi);
+}
+
+// ── Diagramm ────────────────────────────────────────────────────
+function drawChart(sex, adultHt, need, minAge, t, tLo, tHi){
+  const W=380,H=230, L=36,R=8,T=12,B=28;
+  const d = M[sex];
+  const x0=minAge, x1=d.end;
+  const yMax = Math.max(savings(sex,adultHt,minAge).total, need) * 1.12;
+  const X = a => L + (a-x0)/(x1-x0)*(W-L-R);
+  const Y = v => T + (1 - v/yMax)*(H-T-B);
+
+  let g='';
+  // Raster
+  for(let a=Math.ceil(x0); a<=x1; a+=1){
+    g += `<line x1="${X(a)}" y1="${T}" x2="${X(a)}" y2="${H-B}" stroke="var(--grid)" stroke-width="1"/>`;
+    g += `<text class="axis-label" x="${X(a)}" y="${H-B+14}" text-anchor="middle">${a}</text>`;
+  }
+  const step = yMax > 12 ? 4 : 2;
+  for(let v=0; v<=yMax; v+=step){
+    g += `<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="${v===0?'var(--grid-major)':'var(--grid)'}" stroke-width="1"/>`;
+    g += `<text class="axis-label" x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${v}</text>`;
+  }
+  g += `<text class="axis-label" x="${L-6}" y="${T-2}" text-anchor="end">cm</text>`;
+  g += `<text class="axis-label" x="${W-R}" y="${H-B+24}" text-anchor="end">Operationsalter (Jahre)</text>`;
+
+  // Unsicherheitsfenster
+  if(t!==null && tLo && tHi){
+    g += `<rect x="${X(tLo)}" y="${T}" width="${X(tHi)-X(tLo)}" height="${H-T-B}" fill="var(--signal-soft)"/>`;
+  }
+  // Bedarfslinie
+  if(need>0 && need<=yMax){
+    g += `<line x1="${L}" y1="${Y(need)}" x2="${W-R}" y2="${Y(need)}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3"/>`;
+    g += `<text class="axis-label" x="${L+4}" y="${Y(need)-5}" fill="var(--ink)">Bedarf ${need.toFixed(1)} cm</text>`;
+  }
+  // Kurve
+  let pts=[];
+  for(let a=x0; a<=x1+0.001; a+=0.1) pts.push(`${X(a).toFixed(1)},${Y(savings(sex,adultHt,a).total).toFixed(1)}`);
+  g += `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--signal)" stroke-width="2.2" stroke-linejoin="round"/>`;
+
+  // Schnittpunkt
+  if(t!==null){
+    g += `<line x1="${X(t)}" y1="${Y(need)}" x2="${X(t)}" y2="${H-B}" stroke="var(--signal)" stroke-width="1.5"/>`;
+    g += `<circle cx="${X(t)}" cy="${Y(need)}" r="4.5" fill="var(--signal)"/>`;
+    g += `<circle cx="${X(t)}" cy="${Y(need)}" r="8" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.4"/>`;
+  }
+  $('chart').innerHTML = `<title>Erreichbare Höhenreduktion nach Operationsalter</title>`+g;
+}
+
+// Untersuchungsdatum auf heute vorbelegen, Geburtsdatum passend zum Startalter
+(function initDates(){
+  const today = new Date();
+  const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  $('exam').value = iso(today);
+  $('dob').value  = iso(new Date(today.getTime() - 11.0*YEAR*DAY));
+})();
+
+inputs.forEach(id => $(id).addEventListener('input', run));
+$('modeAge').addEventListener('click', () => setMode('age'));
+$('modeDob').addEventListener('click', () => setMode('dob'));
+run();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>

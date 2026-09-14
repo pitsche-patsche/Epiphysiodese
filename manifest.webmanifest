@@ -1,0 +1,17 @@
+{
+  "name": "Epiphyseodese-Timing",
+  "short_name": "Epiphyseodese",
+  "description": "Optimaler Zeitpunkt der kompletten Epiphyseodese von distalem Femur und proximaler Tibia nach der Multiplier-Methode.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F8F9",
+  "theme_color": "#16202B",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
