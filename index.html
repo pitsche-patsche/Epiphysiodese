@@ -95,6 +95,29 @@ input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;bord
 .derived b{color:var(--ink);font-weight:500}
 .derived.bad b{color:var(--alert)}
 [hidden]{display:none !important}
+
+/* Prognostizierte Endgröße — Zwischenergebnis im Eingabeblock */
+.prog{
+  grid-column:1/-1;
+  display:flex;
+  align-items:baseline;
+  gap:4px 11px;
+  flex-wrap:wrap;
+  background:var(--signal-soft);
+  border-left:3px solid var(--signal);
+  border-radius:3px;
+  padding:10px 13px;
+  margin:3px 0 1px;
+}
+.prog-lab{font-size:13px;color:var(--muted)}
+.prog-val{
+  font-size:23px;
+  font-weight:600;
+  color:var(--signal);
+  letter-spacing:-0.01em;
+  line-height:1.15;
+}
+.prog-note{font-size:12.5px;color:var(--muted)}
 .opdate{
   font-size:15px;
   color:var(--ink);
@@ -226,12 +249,15 @@ h2{font-size:14px;font-weight:600;margin:30px 0 2px}
       <input id="height" type="number" step="0.5" min="80" max="220" value="163">
     </div>
     <div>
-      <label for="target">Ziel-Endgröße (cm)</label>
-      <input id="target" type="number" step="0.5" min="120" max="230" value="195">
-    </div>
-    <div>
       <label for="sd">Unsicherheit der Prognose ± (cm)</label>
       <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
+    </div>
+
+    <div class="prog" id="prog"></div>
+
+    <div>
+      <label for="target">Ziel-Endgröße (cm)</label>
+      <input id="target" type="number" step="0.5" min="120" max="230" value="195">
     </div>
     <div>
       <label for="minage">Frühester Eingriff (Jahre)</label>
@@ -382,6 +408,8 @@ function run(){
       $('flags').innerHTML = '';
       $('chart').innerHTML = '';
       $('now').innerHTML = '';
+      $('prog').innerHTML = '<span class="prog-lab">Prognostizierte Endgröße</span>'
+                          + '<span class="prog-note">— wartet auf gültige Datumsangaben</span>';
       return;
     }
   }
@@ -401,9 +429,17 @@ function run(){
   const tHi = solve(sex, adultHt, need - sd, effMin); // weniger nötig → später
   const tLo = solve(sex, adultHt, need + sd, effMin); // mehr nötig → früher
 
+  // ── Prognostizierte Endgröße (Zwischenergebnis im Eingabeblock) ──
+  $('prog').innerHTML =
+      '<span class="prog-lab">Prognostizierte Endgröße ohne Eingriff</span>'
+    + '<span class="prog-val">'+adultHt.toFixed(1)+' cm</span>'
+    + (sd > 0 ? '<span class="prog-note">± '+sd.toFixed(1)+' cm</span>' : '');
+
   // ── Textausgabe ───────────────────────────────────────────────
-  let v = "Prognostizierte Endgröße ohne Eingriff: <b>"+adultHt.toFixed(1)+" cm</b>. "
-        + "Erforderliche Reduktion: <b>"+need.toFixed(1)+" cm</b>.";
+  let v = need > 0
+        ? "Erforderliche Reduktion: <b>"+need.toFixed(1)+" cm</b> auf "+tgt.toFixed(1)+" cm."
+        : "Keine Reduktion erforderlich — die Prognose liegt bereits <b>"
+          +Math.abs(need).toFixed(1)+" cm</b> unter der Zielgröße von "+tgt.toFixed(1)+" cm.";
 
   if(need <= 0){
     v += '<span class="age-big">—</span><span class="window">Die Zielgröße liegt bereits über der Prognose. Kein Eingriff indiziert.</span>';
