@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Epiphyseodese-Timing nach Paley</title>
+<title>Hochwuchstherapie — Wachstumsdämpfung bei konstitutionellem Hochwuchs</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#16202B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Epiphyseodese">
+<meta name="apple-mobile-web-app-title" content="Hochwuchs">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +39,15 @@ body{
   margin:0 auto;
 }
 h1{font-size:21px;font-weight:600;letter-spacing:-0.01em;margin:0 0 2px}
-.sub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 6px}
+.org{
+  font-size:13px;
+  color:var(--ink);
+  font-weight:500;
+  margin:0 0 20px;
+  padding-top:7px;
+  border-top:1px solid var(--rule);
+}
 
 /* ── Blöcke ───────────────────────────────────────────── */
 .card{
@@ -178,6 +186,17 @@ tr.today td:first-child{font-weight:600}
   margin-top:14px;
 }
 h2{font-size:14px;font-weight:600;margin:28px 0 2px}
+footer{
+  font-size:12.5px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-top:24px;
+  padding-top:12px;
+  border-top:1px solid var(--rule);
+}
+footer b{color:var(--ink);font-weight:500}
+footer a{color:var(--signal);text-decoration:none;word-break:break-word}
+footer a:hover{text-decoration:underline}
 @media(max-width:480px){
   .grid2{grid-template-columns:1fr}
   .out-val{font-size:28px}
@@ -193,8 +212,9 @@ h2{font-size:14px;font-weight:600;margin:28px 0 2px}
 </head>
 <body>
 
-<h1>Epiphyseodese-Timing</h1>
-<p class="sub">Komplette Epiphyseodese von distalem Femur und proximaler Tibia. Multiplier-Methode nach Paley.</p>
+<h1>Hochwuchstherapie</h1>
+<p class="sub">Wachstumsdämpfung bei konstitutionellem Hochwuchs — komplette Epiphyseodese von distalem Femur und proximaler Tibia, Multiplier-Methode nach Paley.</p>
+<p class="org">Kinderorthopädie im Emil-von-Behring-Krankenhaus</p>
 
 <!-- ══ Block 1 ══════════════════════════════════════════ -->
 <section class="card">
@@ -230,10 +250,6 @@ h2{font-size:14px;font-weight:600;margin:28px 0 2px}
         <div>
           <label for="height">Aktuelle Körpergröße (cm)</label>
           <input id="height" type="number" step="0.5" min="80" max="220" value="163">
-        </div>
-        <div>
-          <label for="sd">Unsicherheit der Prognose ± (cm)</label>
-          <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
         </div>
       </div>
     </fieldset>
@@ -271,6 +287,10 @@ h2{font-size:14px;font-weight:600;margin:28px 0 2px}
         <label for="minage">Frühester Eingriff (Jahre)</label>
         <input id="minage" type="number" step="0.5" min="8" max="16" value="10">
       </div>
+      <div id="wrapSd" hidden>
+        <label for="sd">Prognoseunsicherheit ± (cm) — für das Zeitfenster</label>
+        <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
+      </div>
     </div>
     <div class="out" id="res"></div>
   </div>
@@ -296,6 +316,11 @@ h2{font-size:14px;font-weight:600;margin:28px 0 2px}
 <br><br>
 Rechenhilfe, kein Ersatz für Ganzbeinaufnahme, Skelettalterbestimmung und klinische Beurteilung.
 </div>
+
+<footer>
+  <b>Kinderorthopädie im Emil-von-Behring-Krankenhaus</b><br>
+  Rückfragen: <a href="mailto:beb-kinderorthop%C3%A4die@helios-gesundheit.de">beb-kinderorthopädie@helios-gesundheit.de</a>
+</footer>
 
 <script>
 // ─── Multiplikatortabellen (NÄHERUNGSWERTE — vor Einsatz verifizieren) ───────
@@ -418,6 +443,7 @@ function setQuest(q){
   $('wrapOpDate').hidden = !(q==='at'  && mode==='dob');
   $('wrapTarget').hidden = q!=='tgt';
   $('wrapMinAge').hidden = q!=='tgt';
+  $('wrapSd').hidden     = q!=='tgt';   // wirkt nur auf das Zeitfenster
   $('qfields').hidden    = q==='now';   // bei "sofort" gibt es nichts einzutragen
   run();
 }
@@ -463,8 +489,7 @@ function run(){
   $('prog').innerHTML =
       '<div class="out-lab">Prognostizierte Endgröße ohne Eingriff</div>'
     + '<div class="out-pair"><div><span class="out-val">'+adultHt.toFixed(1)+' cm</span>'
-    + '<span class="out-cap">'+(sd > 0 ? 'Unsicherheit ± '+sd.toFixed(1)+' cm · ' : '')
-    + 'aus '+fmtAge(age0)+' und '+ht0.toFixed(1)+' cm</span></div></div>'
+    + '<span class="out-cap">aus '+fmtAge(age0)+' und '+ht0.toFixed(1)+' cm</span></div></div>'
     + (age0 >= d.end
         ? '<div class="out-verdict">Das Wachstum ist in diesem Alter abgeschlossen; die Prognose entspricht der aktuellen Größe.</div>'
         : '');
@@ -501,8 +526,7 @@ function run(){
           + '<span class="out-cap">resultierende Endgröße</span></div>'
           + '</div>'
           + '<div class="out-detail">davon distaler Femur <b>'+s.dFem.toFixed(1)
-          + ' cm</b> · proximale Tibia <b>'+s.dTib.toFixed(1)+' cm</b>'
-          + (sd > 0 ? ' · Endgröße ± '+sd.toFixed(1)+' cm' : '')+'</div>';
+          + ' cm</b> · proximale Tibia <b>'+s.dTib.toFixed(1)+' cm</b></div>';
         if(tOp < age0 - 0.02){
           r += '<div class="out-verdict warn">Dieser Zeitpunkt liegt vor dem heutigen Alter ('
              + fmtAge(age0)+'). Der Wert ist rechnerisch, aber nicht mehr erreichbar.</div>';

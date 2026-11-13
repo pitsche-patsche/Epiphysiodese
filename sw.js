@@ -1,5 +1,5 @@
 // Version bei jeder Änderung hochzählen — erzwingt das Nachladen auf allen Geräten.
-const VERSION = 'v4';
+const VERSION = 'v5';
 const SHELL = 'shell-' + VERSION;
 const RUNTIME = 'runtime-' + VERSION;
 

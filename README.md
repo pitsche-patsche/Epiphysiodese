@@ -1,31 +1,39 @@
-# Epiphyseodese-Timing
+# Hochwuchstherapie
+
+Wachstumsdämpfung bei konstitutionellem Hochwuchs.
+Kinderorthopädie im Emil-von-Behring-Krankenhaus.
 
 Rechner für den Zeitpunkt der kompletten Epiphyseodese von distalem Femur und
 proximaler Tibia, um eine definierte Endgröße zu erreichen. Multiplier-Methode
 nach Paley. Läuft vollständig im Browser, offline, ohne Server und ohne
 Datenübertragung.
 
-Zwei Fragen werden beantwortet:
+Die Oberfläche besteht aus zwei umrandeten Blöcken:
 
-1. **Wann operieren?** Aus Alter, aktueller Größe und Ziel-Endgröße wird der
-   Zeitpunkt errechnet, zu dem das verbleibende knienahe Wachstum genau der
-   erforderlichen Reduktion entspricht.
-2. **Was bringt eine Operation sofort?** Der Block *Epiphyseodese sofort* zeigt
-   die beim aktuellen Alter maximal erreichbare Reduktion, aufgeteilt nach
-   distalem Femur und proximaler Tibia, und die daraus folgende Endgröße. Damit
-   ist auf einen Blick erkennbar, ob noch Zeit bleibt oder das Fenster bereits
-   geschlossen ist.
+**1 · Prognose ohne Eingriff** — aus Geschlecht, Alter (oder Geburtsdatum)
+und aktueller Körpergröße wird die zu erwartende Endgröße berechnet.
 
-## Auf GitHub Pages veröffentlichen
+**2 · Epiphyseodese** — hier wird zwischen drei Fragen umgeschaltet:
 
-1. Neues Repository anlegen, z. B. `epiphyseodese`. Sichtbarkeit: public
+- *sofort* — welche Reduktion und welche Endgröße ein Eingriff zum
+  heutigen Zeitpunkt ergäbe, aufgeteilt nach distalem Femur und
+  proximaler Tibia
+- *zu einem Zeitpunkt* — dasselbe für ein frei gewähltes Operationsalter
+  bzw. Operationsdatum
+- *für eine Zielgröße* — der Zeitpunkt, zu dem das verbleibende knienahe
+  Wachstum genau der erforderlichen Reduktion entspricht, mit Zeitfenster
+  aus der Prognoseunsicherheit
+
+## Veröffentlichen
+
+1. Neues Repository anlegen, z. B. `Epiphysiodese`. Sichtbarkeit: public
    (GitHub Pages ist bei privaten Repos kostenpflichtig).
 2. Alle Dateien dieses Ordners in den Hauptzweig hochladen —
    `index.html` muss im Wurzelverzeichnis liegen.
 3. **Settings → Pages → Source: Deploy from a branch**, Branch `main`,
    Ordner `/ (root)`, speichern.
 4. Nach ein bis zwei Minuten ist die Seite unter
-   `https://<benutzername>.github.io/epiphyseodese/` erreichbar.
+   `https://pitsche-patsche.github.io/Epiphysiodese/` erreichbar.
 
 ## Auf dem Home-Bildschirm ablegen
 
@@ -71,3 +79,8 @@ Ab Beginn des Wachstumsschubs ist das Skelettalter dem chronologischen Alter
 
 Rechenhilfe, kein Ersatz für Ganzbeinaufnahme, Skelettalterbestimmung und
 klinische Beurteilung.
+
+## Kontakt
+
+Kinderorthopädie im Emil-von-Behring-Krankenhaus
+<beb-kinderorthopädie@helios-gesundheit.de>
