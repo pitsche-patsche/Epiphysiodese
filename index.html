@@ -202,6 +202,8 @@ footer{
 footer b{color:var(--ink);font-weight:500}
 footer a{color:var(--signal);text-decoration:none;word-break:break-word}
 footer a:hover{text-decoration:underline}
+.verline{display:inline-block;margin-top:6px;font-variant-numeric:tabular-nums}
+.verline b{font-weight:600}
 @media(max-width:480px){
   .grid2{grid-template-columns:1fr}
   .out-val{font-size:28px}
@@ -333,7 +335,8 @@ Rechenhilfe, kein Ersatz für Ganzbeinaufnahme, Skelettalterbestimmung und klini
 
 <footer>
   <b>Kinderorthopädie im Emil-von-Behring-Krankenhaus</b><br>
-  Rückfragen: <a href="mailto:beb-kinderorthopaedie@helios-gesundheit.de">beb-kinderorthopaedie@helios-gesundheit.de</a>
+  Rückfragen: <a href="mailto:beb-kinderorthopaedie@helios-gesundheit.de">beb-kinderorthopaedie@helios-gesundheit.de</a><br>
+  <span class="verline">Fassung <b id="ver">—</b> · <a href="#" id="refresh">Aktualisierung erzwingen</a></span>
 </footer>
 
 <script>
@@ -746,9 +749,43 @@ document.querySelectorAll('input[type="number"]').forEach(el => {
   el.addEventListener('blur',  () => { fresh = false; });
 });
 
+// ── Fassung anzeigen und selbsttätig aktualisieren ───────────────
+const APP_VERSION = 'v9';
+$('ver').textContent = APP_VERSION;
+
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+
+  // Übernimmt ein neuer Service Worker die Kontrolle, einmal neu laden —
+  // dann erscheint die neue Fassung beim ersten Start statt beim zweiten.
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(!hadController || reloaded) return;   // beim Erstbesuch nicht neu laden
+    reloaded = true;
+    location.reload();
+  });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => { reg.update(); })         // bei jedem Start nach Neuem sehen
+      .catch(()=>{});
+  });
 }
+
+// Notnagel: Cache und Service Worker verwerfen und frisch laden
+$('refresh').addEventListener('click', async (e) => {
+  e.preventDefault();
+  $('refresh').textContent = 'lädt neu …';
+  try{
+    if('caches' in window){
+      for(const k of await caches.keys()) await caches.delete(k);
+    }
+    if('serviceWorker' in navigator){
+      for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+    }
+  }catch(err){}
+  location.replace(location.pathname + '?r=' + Date.now());
+});
 </script>
 </body>
 </html>

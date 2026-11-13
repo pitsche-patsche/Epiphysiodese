@@ -48,9 +48,17 @@ Danach startet der Rechner im Vollbild und funktioniert ohne Netz.
 
 ## Aktualisieren
 
-Geänderte Dateien hochladen **und** in `sw.js` die Zeile
-`const VERSION = 'v1';` hochzählen. Ohne diese Änderung liefert der
-Service Worker weiter die alte, zwischengespeicherte Fassung aus.
+Geänderte Dateien hochladen und dabei **beide** Versionsnummern
+hochzählen: `const VERSION` in `sw.js` und `const APP_VERSION` in
+`index.html` (am Ende des Skripts). Die erste erneuert den Cache, die
+zweite erscheint im Fußbereich der Seite.
+
+Die App sucht bei jedem Start nach einer neuen Fassung und lädt sich
+einmal selbst neu, sobald sie eine findet — ein zweiter Start ist nicht
+nötig. Klemmt es doch, hilft der Verweis *Aktualisierung erzwingen* im
+Fußbereich: er verwirft Cache und Service Worker und lädt frisch. Von
+außen wirkt derselbe Effekt, wenn man die Adresse mit einem Anhängsel
+aufruft, etwa `…/Epiphysiodese/?neu`.
 
 ## Modell
 
