@@ -83,4 +83,4 @@ klinische Beurteilung.
 ## Kontakt
 
 Kinderorthopädie im Emil-von-Behring-Krankenhaus
-<beb-kinderorthopädie@helios-gesundheit.de>
+<beb-kinderorthopaedie@helios-gesundheit.de>
