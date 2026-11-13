@@ -38,15 +38,41 @@ body{
   max-width:760px;
   margin:0 auto;
 }
-h1{
-  font-size:21px;
-  font-weight:600;
-  letter-spacing:-0.01em;
-  margin:0 0 2px;
-}
-.sub{color:var(--muted);font-size:13.5px;margin:0 0 22px}
+h1{font-size:21px;font-weight:600;letter-spacing:-0.01em;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
 
-fieldset{border:none;padding:0;margin:0 0 20px}
+/* ── Blöcke ───────────────────────────────────────────── */
+.card{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:0;
+  margin:0 0 16px;
+  overflow:hidden;
+}
+.card-head{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:11px 15px 10px;
+  border-bottom:1px solid var(--grid);
+  background:#FBFCFC;
+}
+.card-num{
+  flex:none;
+  width:21px;height:21px;
+  border-radius:50%;
+  background:var(--signal);
+  color:#fff;
+  font-size:12.5px;
+  font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.card-title{font-size:14px;font-weight:600}
+.card-hint{font-size:12.5px;color:var(--muted);font-weight:400;margin-left:auto;text-align:right}
+.card-body{padding:14px 15px 15px}
+
+fieldset{border:none;padding:0;margin:0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
 label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
 input,select{
@@ -69,16 +95,19 @@ input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;bord
   background:#fff;
   margin-bottom:14px;
   width:fit-content;
+  max-width:100%;
+  flex-wrap:wrap;
 }
 .modes button{
   font:inherit;
   font-size:13.5px;
-  padding:7px 15px;
+  padding:7px 14px;
   border:none;
   background:none;
   color:var(--muted);
   cursor:pointer;
   border-bottom:2px solid transparent;
+  white-space:nowrap;
 }
 .modes button[aria-pressed="true"]{
   color:var(--ink);
@@ -86,96 +115,36 @@ input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;bord
   font-weight:500;
 }
 .modes button:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
-.derived{
-  grid-column:1/-1;
-  font-size:13.5px;
-  color:var(--muted);
-  padding:2px 0 0;
-}
+.lbl-short{display:none}
+
+.derived{grid-column:1/-1;font-size:13.5px;color:var(--muted);padding:2px 0 0}
 .derived b{color:var(--ink);font-weight:500}
 .derived.bad b{color:var(--alert)}
 [hidden]{display:none !important}
 
-/* Prognostizierte Endgröße — Zwischenergebnis im Eingabeblock */
-.prog{
-  grid-column:1/-1;
-  display:flex;
-  align-items:baseline;
-  gap:4px 11px;
-  flex-wrap:wrap;
-  background:var(--signal-soft);
-  border-left:3px solid var(--signal);
-  border-radius:3px;
-  padding:10px 13px;
-  margin:3px 0 1px;
+/* ── Ergebnis innerhalb eines Blocks ──────────────────── */
+.out{
+  margin-top:14px;
+  padding-top:13px;
+  border-top:1px solid var(--grid);
 }
-.prog-lab{font-size:13px;color:var(--muted)}
-.prog-val{
-  font-size:23px;
-  font-weight:600;
-  color:var(--signal);
-  letter-spacing:-0.01em;
-  line-height:1.15;
-}
-.prog-note{font-size:12.5px;color:var(--muted)}
-.opdate{
-  font-size:15px;
-  color:var(--ink);
-  margin-top:2px;
-}
-.opdate b{font-weight:600}
-
-.readout{
-  border-top:2px solid var(--ink);
-  border-bottom:1px solid var(--rule);
-  padding:18px 0 16px;
-  margin:22px 0 4px;
-}
-.verdict{font-size:15px;line-height:1.45}
-.age-big{
-  font-size:44px;
-  font-weight:600;
-  letter-spacing:-0.02em;
-  line-height:1.05;
-  color:var(--signal);
-  display:block;
-  margin:2px 0 6px;
-}
-.age-big.blocked{color:var(--alert)}
-.window{font-size:14px;color:var(--muted)}
-
-/* Sofort-Eingriff */
-.now{
-  border:1px solid var(--rule);
-  border-left:3px solid var(--signal);
-  border-radius:3px;
-  background:#fff;
-  padding:14px 16px 13px;
-  margin:16px 0 4px;
-}
-.now-head{
-  font-size:12px;
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:9px;
-}
-.now-sub{text-transform:none;letter-spacing:0}
-.now-sub b{color:var(--ink);font-weight:500}
-.now-pair{display:flex;gap:34px;flex-wrap:wrap}
-.now-val{
-  font-size:30px;
+.out-lab{font-size:12.5px;color:var(--muted);margin-bottom:3px}
+.out-pair{display:flex;gap:30px;flex-wrap:wrap}
+.out-val{
+  font-size:32px;
   font-weight:600;
   letter-spacing:-0.02em;
   line-height:1.1;
   color:var(--signal);
   display:block;
 }
-.now-val.blocked{color:var(--alert)}
-.now-cap{font-size:12.5px;color:var(--muted);display:block;margin-top:1px}
-.now-split{font-size:13px;color:var(--muted);margin-top:11px}
-.now-split b{color:var(--ink);font-weight:500}
-.now-verdict{font-size:13.5px;margin-top:9px;padding-top:9px;border-top:1px solid var(--grid)}
+.out-val.sm{font-size:26px}
+.out-val.blocked{color:var(--alert)}
+.out-cap{font-size:12.5px;color:var(--muted);display:block;margin-top:1px}
+.out-detail{font-size:13px;color:var(--muted);margin-top:10px}
+.out-detail b{color:var(--ink);font-weight:500}
+.out-verdict{font-size:13.5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--grid)}
+.out-verdict.warn{color:var(--alert);border-top-color:var(--alert)}
 
 svg{width:100%;height:auto;display:block;margin:8px 0 4px;overflow:visible}
 .axis-label{font-size:11px;fill:var(--muted)}
@@ -208,81 +177,115 @@ tr.today td:first-child{font-weight:600}
   padding-left:12px;
   margin-top:14px;
 }
-h2{font-size:14px;font-weight:600;margin:30px 0 2px}
+h2{font-size:14px;font-weight:600;margin:28px 0 2px}
 @media(max-width:480px){
   .grid2{grid-template-columns:1fr}
-  .age-big{font-size:38px}
+  .out-val{font-size:28px}
+  .out-val.sm{font-size:22px}
+  .out-pair{gap:13px 26px}
+  .card-hint{display:none}
+  .modes{width:100%;flex-wrap:nowrap}
+  .modes button{flex:1;padding:8px 4px;font-size:13px;text-align:center}
+  .lbl-long{display:none}
+  .lbl-short{display:inline}
 }
 </style>
 </head>
 <body>
 
 <h1>Epiphyseodese-Timing</h1>
-<p class="sub">Wann muss die komplette Epiphyseodese von distalem Femur und proximaler Tibia erfolgen, um eine bestimmte Endgröße zu erreichen — und wie viel ließe sich bei sofortigem Eingriff noch einsparen? Multiplier-Methode nach Paley.</p>
+<p class="sub">Komplette Epiphyseodese von distalem Femur und proximaler Tibia. Multiplier-Methode nach Paley.</p>
 
-<fieldset>
-  <div class="modes" role="group" aria-label="Wie soll das Alter bestimmt werden?">
-    <button type="button" id="modeAge" aria-pressed="true">Alter eingeben</button>
-    <button type="button" id="modeDob" aria-pressed="false">Aus Geburtsdatum</button>
+<!-- ══ Block 1 ══════════════════════════════════════════ -->
+<section class="card">
+  <div class="card-head">
+    <span class="card-num">1</span>
+    <span class="card-title">Prognose ohne Eingriff</span>
+    <span class="card-hint">Welche Endgröße ist zu erwarten?</span>
   </div>
-
-  <div class="grid2">
-    <div>
-      <label for="sex">Geschlecht</label>
-      <select id="sex"><option value="m" selected>männlich</option><option value="w">weiblich</option></select>
-    </div>
-    <div id="wrapAge">
-      <label for="age">Aktuelles Alter (Jahre)</label>
-      <input id="age" type="number" step="0.1" min="6" max="17" value="11.0">
-    </div>
-    <div id="wrapDob" hidden>
-      <label for="dob">Geburtsdatum</label>
-      <input id="dob" type="date">
-    </div>
-    <div id="wrapExam" hidden>
-      <label for="exam">Untersuchungsdatum</label>
-      <input id="exam" type="date">
-    </div>
-    <div class="derived" id="derived" hidden></div>
-    <div>
-      <label for="height">Aktuelle Körpergröße (cm)</label>
-      <input id="height" type="number" step="0.5" min="80" max="220" value="163">
-    </div>
-    <div>
-      <label for="sd">Unsicherheit der Prognose ± (cm)</label>
-      <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
-    </div>
-
-    <div class="prog" id="prog"></div>
-
-    <div>
-      <label for="target">Ziel-Endgröße (cm)</label>
-      <input id="target" type="number" step="0.5" min="120" max="230" value="195">
-    </div>
-    <div>
-      <label for="minage">Frühester Eingriff (Jahre)</label>
-      <input id="minage" type="number" step="0.5" min="8" max="14" value="10">
-    </div>
+  <div class="card-body">
+    <fieldset>
+      <div class="modes" role="group" aria-label="Wie soll das Alter bestimmt werden?">
+        <button type="button" id="modeAge" aria-pressed="true"><span class="lbl-long">Alter eingeben</span><span class="lbl-short">Alter</span></button>
+        <button type="button" id="modeDob" aria-pressed="false"><span class="lbl-long">Aus Geburtsdatum</span><span class="lbl-short">Geburtsdatum</span></button>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="sex">Geschlecht</label>
+          <select id="sex"><option value="m" selected>männlich</option><option value="w">weiblich</option></select>
+        </div>
+        <div id="wrapAge">
+          <label for="age">Aktuelles Alter (Jahre)</label>
+          <input id="age" type="number" step="0.1" min="6" max="18" value="11.0">
+        </div>
+        <div id="wrapDob" hidden>
+          <label for="dob">Geburtsdatum</label>
+          <input id="dob" type="date">
+        </div>
+        <div id="wrapExam" hidden>
+          <label for="exam">Untersuchungsdatum</label>
+          <input id="exam" type="date">
+        </div>
+        <div class="derived" id="derived" hidden></div>
+        <div>
+          <label for="height">Aktuelle Körpergröße (cm)</label>
+          <input id="height" type="number" step="0.5" min="80" max="220" value="163">
+        </div>
+        <div>
+          <label for="sd">Unsicherheit der Prognose ± (cm)</label>
+          <input id="sd" type="number" step="0.5" min="0" max="15" value="3">
+        </div>
+      </div>
+    </fieldset>
+    <div class="out" id="prog"></div>
   </div>
-</fieldset>
+</section>
 
-<div class="readout">
-  <div class="verdict" id="verdict"></div>
-</div>
+<!-- ══ Block 2 ══════════════════════════════════════════ -->
+<section class="card">
+  <div class="card-head">
+    <span class="card-num">2</span>
+    <span class="card-title">Epiphyseodese</span>
+    <span class="card-hint">Was bringt der Eingriff?</span>
+  </div>
+  <div class="card-body">
+    <div class="modes" role="group" aria-label="Was soll berechnet werden?">
+      <button type="button" id="qNow"  aria-pressed="true">sofort</button>
+      <button type="button" id="qAge"  aria-pressed="false"><span class="lbl-long">zu einem Zeitpunkt</span><span class="lbl-short">Zeitpunkt</span></button>
+      <button type="button" id="qTgt"  aria-pressed="false"><span class="lbl-long">für eine Zielgröße</span><span class="lbl-short">Zielgröße</span></button>
+    </div>
+    <div class="grid2" id="qfields">
+      <div id="wrapOpAge" hidden>
+        <label for="opage">Operationsalter (Jahre)</label>
+        <input id="opage" type="number" step="0.5" min="6" max="18" value="12.0">
+      </div>
+      <div id="wrapOpDate" hidden>
+        <label for="opdate">Operationsdatum</label>
+        <input id="opdate" type="date">
+      </div>
+      <div id="wrapTarget" hidden>
+        <label for="target">Ziel-Endgröße (cm)</label>
+        <input id="target" type="number" step="0.5" min="120" max="230" value="195">
+      </div>
+      <div id="wrapMinAge" hidden>
+        <label for="minage">Frühester Eingriff (Jahre)</label>
+        <input id="minage" type="number" step="0.5" min="8" max="16" value="10">
+      </div>
+    </div>
+    <div class="out" id="res"></div>
+  </div>
+</section>
 
-<div class="now" id="now"></div>
+<div id="flags"></div>
 
+<h2>Erreichbare Reduktion nach Operationsalter</h2>
 <svg id="chart" viewBox="0 0 380 230" role="img" aria-labelledby="charttitle">
   <title id="charttitle">Erreichbare Höhenreduktion in Abhängigkeit vom Operationsalter</title>
 </svg>
-
-<h2>Erreichbare Reduktion nach Operationsalter</h2>
 <table id="tbl">
   <thead><tr><th>Alter</th><th>Größe</th><th>dist. Femur</th><th>prox. Tibia</th><th>Summe</th><th>Endgröße</th></tr></thead>
   <tbody></tbody>
 </table>
-
-<div id="flags"></div>
 
 <div class="note">
 <b>Modell.</b> Restwachstum je Segment = Länge × (M − 1). Die distale Femurfuge trägt rund 71 % des Femurwachstums, die proximale Tibiafuge rund 57 % des Tibiawachstums. Segmentlängen werden aus der Körpergröße geschätzt (Femur 27 %, Tibia 22 % der Stehhöhe).
@@ -348,9 +351,9 @@ function solve(sex, adultHt, need, minAge){
 }
 
 const $ = id => document.getElementById(id);
-const inputs = ['sex','age','height','target','sd','minage','dob','exam'];
 const DAY = 86400000, YEAR = 365.2425;
-let mode = 'age';
+let mode = 'age';     // age | dob      — wie das aktuelle Alter bestimmt wird
+let quest = 'now';    // now | at | tgt — welche Frage Block 2 beantwortet
 
 function fmtAge(a){
   const y = Math.floor(a), mo = Math.round((a-y)*12);
@@ -363,11 +366,10 @@ function parseDate(v){
 }
 function decimalAge(dob, exam){ return (exam - dob)/DAY/YEAR; }
 function ageToDate(dob, a){ return new Date(dob.getTime() + a*YEAR*DAY); }
-function fmtDate(d){
-  return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
-}
+function fmtDate(d){ return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function isoDate(d){ return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
 
-// Liefert das aktuelle Alter je nach Modus, oder null bei ungültiger Eingabe
+// Aktuelles Alter je nach Modus, oder null bei ungültiger Eingabe
 function currentAge(){
   if(mode === 'age') return +$('age').value;
   const dob = parseDate($('dob').value), exam = parseDate($('exam').value);
@@ -375,7 +377,19 @@ function currentAge(){
   return decimalAge(dob, exam);
 }
 
+// Gewähltes Operationsalter im Modus "zu einem Zeitpunkt"
+function opAge(){
+  if(mode === 'dob'){
+    const dob = parseDate($('dob').value), od = parseDate($('opdate').value);
+    if(!dob || !od) return null;
+    return decimalAge(dob, od);
+  }
+  const v = +$('opage').value;
+  return isFinite(v) && v > 0 ? v : null;
+}
+
 function setMode(m){
+  const before = currentAge();
   mode = m;
   $('modeAge').setAttribute('aria-pressed', m==='age');
   $('modeDob').setAttribute('aria-pressed', m==='dob');
@@ -383,179 +397,207 @@ function setMode(m){
   $('wrapDob').hidden  = m!=='dob';
   $('wrapExam').hidden = m!=='dob';
   $('derived').hidden  = m!=='dob';
+  // Operationszeitpunkt zwischen Alters- und Datumsfeld umrechnen
+  const dob = parseDate($('dob').value);
+  if(m === 'dob' && dob){
+    const a = +$('opage').value;
+    if(isFinite(a) && a > 0) $('opdate').value = isoDate(ageToDate(dob, a));
+  } else if(m === 'age' && dob){
+    const od = parseDate($('opdate').value);
+    if(od) $('opage').value = decimalAge(dob, od).toFixed(1);
+  }
+  setQuest(quest);
+}
+
+function setQuest(q){
+  quest = q;
+  $('qNow').setAttribute('aria-pressed', q==='now');
+  $('qAge').setAttribute('aria-pressed', q==='at');
+  $('qTgt').setAttribute('aria-pressed', q==='tgt');
+  $('wrapOpAge').hidden  = !(q==='at'  && mode==='age');
+  $('wrapOpDate').hidden = !(q==='at'  && mode==='dob');
+  $('wrapTarget').hidden = q!=='tgt';
+  $('wrapMinAge').hidden = q!=='tgt';
+  $('qfields').hidden    = q==='now';   // bei "sofort" gibt es nichts einzutragen
   run();
 }
 
-function run(){
-  const sex   = $('sex').value;
-  const dob   = parseDate($('dob').value);
-  const age0  = currentAge();
+function clearOut(msg){
+  $('prog').innerHTML = '<div class="out-lab">Prognostizierte Endgröße</div>'
+                      + '<div class="out-detail">'+msg+'</div>';
+  $('res').innerHTML  = '<div class="out-detail">'+msg+'</div>';
+  $('tbl').querySelector('tbody').innerHTML = '';
+  $('flags').innerHTML = '';
+  $('chart').innerHTML = '';
+}
 
+function run(){
+  const sex  = $('sex').value;
+  const dob  = parseDate($('dob').value);
+  const age0 = currentAge();
+  const d    = M[sex];
+
+  // ── Block 1: abgeleitetes Alter im Geburtsdatums-Modus ──
   if(mode === 'dob'){
     const exam = parseDate($('exam').value);
     const dv = $('derived');
     if(age0 === null){
       dv.className = 'derived bad';
       dv.innerHTML = 'Beide Daten eintragen; das Untersuchungsdatum muss nach dem Geburtsdatum liegen.';
-    } else {
-      dv.className = 'derived';
-      dv.innerHTML = 'Chronologisches Alter am '+fmtDate(exam)+': <b>'+fmtAge(age0)
-                   +'</b> ('+age0.toFixed(2)+' Jahre)';
-    }
-    if(age0 === null){
-      $('verdict').innerHTML = 'Warte auf ein gültiges Geburts- und Untersuchungsdatum.';
-      $('tbl').querySelector('tbody').innerHTML = '';
-      $('flags').innerHTML = '';
-      $('chart').innerHTML = '';
-      $('now').innerHTML = '';
-      $('prog').innerHTML = '<span class="prog-lab">Prognostizierte Endgröße</span>'
-                          + '<span class="prog-note">— wartet auf gültige Datumsangaben</span>';
+      clearOut('Wartet auf gültige Datumsangaben.');
       return;
     }
+    dv.className = 'derived';
+    dv.innerHTML = 'Chronologisches Alter am '+fmtDate(exam)+': <b>'+fmtAge(age0)
+                 +'</b> ('+age0.toFixed(2)+' Jahre)';
   }
+  if(age0 === null || !isFinite(age0)){ clearOut('Alter fehlt.'); return; }
 
-  const ht0   = +$('height').value;
-  const tgt   = +$('target').value;
-  const sd    = +$('sd').value;
-  const minAge= +$('minage').value;
-  const d = M[sex];
+  const ht0 = +$('height').value;
+  const sd  = +$('sd').value;
+  if(!isFinite(ht0) || ht0 <= 0){ clearOut('Körpergröße fehlt.'); return; }
 
   const adultHt = ht0 * interp(d.ht, age0);
-  const need = adultHt - tgt;
-  const effMin  = Math.max(minAge, age0);   // frühestmöglicher Eingriff: nicht vor heute
-  const maxSave = savings(sex, adultHt, effMin).total;
 
-  const t   = solve(sex, adultHt, need, effMin);
-  const tHi = solve(sex, adultHt, need - sd, effMin); // weniger nötig → später
-  const tLo = solve(sex, adultHt, need + sd, effMin); // mehr nötig → früher
-
-  // ── Prognostizierte Endgröße (Zwischenergebnis im Eingabeblock) ──
+  // ── Block 1: Ausgabe ────────────────────────────────────
   $('prog').innerHTML =
-      '<span class="prog-lab">Prognostizierte Endgröße ohne Eingriff</span>'
-    + '<span class="prog-val">'+adultHt.toFixed(1)+' cm</span>'
-    + (sd > 0 ? '<span class="prog-note">± '+sd.toFixed(1)+' cm</span>' : '');
+      '<div class="out-lab">Prognostizierte Endgröße ohne Eingriff</div>'
+    + '<div class="out-pair"><div><span class="out-val">'+adultHt.toFixed(1)+' cm</span>'
+    + '<span class="out-cap">'+(sd > 0 ? 'Unsicherheit ± '+sd.toFixed(1)+' cm · ' : '')
+    + 'aus '+fmtAge(age0)+' und '+ht0.toFixed(1)+' cm</span></div></div>'
+    + (age0 >= d.end
+        ? '<div class="out-verdict">Das Wachstum ist in diesem Alter abgeschlossen; die Prognose entspricht der aktuellen Größe.</div>'
+        : '');
 
-  // ── Textausgabe ───────────────────────────────────────────────
-  let v = need > 0
-        ? "Erforderliche Reduktion: <b>"+need.toFixed(1)+" cm</b> auf "+tgt.toFixed(1)+" cm."
-        : "Keine Reduktion erforderlich — die Prognose liegt bereits <b>"
-          +Math.abs(need).toFixed(1)+" cm</b> unter der Zielgröße von "+tgt.toFixed(1)+" cm.";
+  // ── Block 2: Ausgabe ────────────────────────────────────
+  let r = '', tMark = null, needLine = null;
 
-  if(need <= 0){
-    v += '<span class="age-big">—</span><span class="window">Die Zielgröße liegt bereits über der Prognose. Kein Eingriff indiziert.</span>';
-  } else if(t === null){
-    v += '<span class="age-big blocked">nicht erreichbar</span>'
-       + '<span class="window">'
-       + (effMin > minAge + 0.01
-            ? 'Auch bei sofortigem Eingriff sind nur <b>'
-            : 'Selbst bei Eingriff mit '+minAge.toFixed(1)+' Jahren sind nur <b>')
-       + maxSave.toFixed(1)+' cm</b> zu gewinnen. Erreichbare Endgröße: <b>'
-       + (adultHt-maxSave).toFixed(1)+' cm</b>.</span>';
-  } else {
-    v += '<span class="age-big">'+fmtAge(t)+'</span>';
-    if(mode === 'dob' && dob){
-      v += '<div class="opdate">Operationsdatum: <b>'+fmtDate(ageToDate(dob,t))+'</b></div>';
-      if(tLo && tHi) v += '<div class="window">Fenster '+fmtDate(ageToDate(dob,tLo))+' bis '
-                        + fmtDate(ageToDate(dob,tHi))+' (±'+sd+' cm Prognoseunsicherheit)</div>';
+  if(quest === 'now' || quest === 'at'){
+    const tOp = quest === 'now' ? age0 : opAge();
+    if(tOp === null){
+      r = '<div class="out-detail">'
+        + (mode==='dob' ? 'Operationsdatum eintragen.' : 'Operationsalter eintragen.')
+        + '</div>';
     } else {
-      if(tLo && tHi) v += '<span class="window">Bei ±'+sd+' cm Prognoseunsicherheit: '+fmtAge(tLo)+' bis '+fmtAge(tHi)+'</span>';
-      else v += '<span class="window">Fenster bei ±'+sd+' cm Unsicherheit teilweise außerhalb des Suchbereichs.</span>';
+      const s  = savings(sex, adultHt, tOp);
+      const ht = adultHt - s.total;
+      tMark = tOp;
+      const when = quest === 'now'
+          ? 'sofort' + (mode==='dob' ? ' (' + fmtDate(parseDate($('exam').value)) + ')' : '')
+          : (mode==='dob' && dob ? 'am '+fmtDate(ageToDate(dob,tOp)) : 'mit '+fmtAge(tOp));
+
+      if(tOp >= d.end){
+        r = '<div class="out-lab">Eingriff '+when+'</div>'
+          + '<div class="out-pair"><div><span class="out-val blocked">—</span>'
+          + '<span class="out-cap">Wachstum abgeschlossen</span></div></div>'
+          + '<div class="out-verdict">Knienah ist kein Restwachstum mehr vorhanden, das sich beeinflussen ließe.</div>';
+      } else {
+        r = '<div class="out-lab">Eingriff '+when
+          + (quest==='now' ? ', '+fmtAge(tOp) : '')+'</div>'
+          + '<div class="out-pair">'
+          + '<div><span class="out-val">−'+s.total.toFixed(1)+' cm</span>'
+          + '<span class="out-cap">Reduktion der Endgröße</span></div>'
+          + '<div><span class="out-val">'+ht.toFixed(1)+' cm</span>'
+          + '<span class="out-cap">resultierende Endgröße</span></div>'
+          + '</div>'
+          + '<div class="out-detail">davon distaler Femur <b>'+s.dFem.toFixed(1)
+          + ' cm</b> · proximale Tibia <b>'+s.dTib.toFixed(1)+' cm</b>'
+          + (sd > 0 ? ' · Endgröße ± '+sd.toFixed(1)+' cm' : '')+'</div>';
+        if(tOp < age0 - 0.02){
+          r += '<div class="out-verdict warn">Dieser Zeitpunkt liegt vor dem heutigen Alter ('
+             + fmtAge(age0)+'). Der Wert ist rechnerisch, aber nicht mehr erreichbar.</div>';
+        }
+      }
     }
-  }
-  $('verdict').innerHTML = v;
-
-  // ── Sofortiger Eingriff beim aktuellen Alter ──────────────────
-  const sNow   = savings(sex, adultHt, age0);
-  const htNow  = adultHt - sNow.total;        // Endgröße bei Epiphyseodese jetzt
-  const exam   = parseDate($('exam').value);
-
-  let n = '<div class="now-head">Epiphyseodese sofort<span class="now-sub"> &nbsp;·&nbsp; '
-        + (mode==='dob' && exam ? fmtDate(exam)+', ' : '')
-        + '<b>'+fmtAge(age0)+'</b>, '+ht0.toFixed(1)+' cm</span></div>';
-
-  if(age0 >= d.end){
-    n += '<div class="now-pair"><div><span class="now-val blocked">—</span>'
-       + '<span class="now-cap">Wachstum abgeschlossen</span></div></div>'
-       + '<div class="now-verdict">Mit '+fmtAge(age0)+' ist knienah kein Restwachstum mehr vorhanden, '
-       + 'das sich beeinflussen ließe.</div>';
   } else {
-    n += '<div class="now-pair">'
-       + '<div><span class="now-val">−'+sNow.total.toFixed(1)+' cm</span>'
-       + '<span class="now-cap">maximale Reduktion</span></div>'
-       + '<div><span class="now-val">'+htNow.toFixed(1)+' cm</span>'
-       + '<span class="now-cap">resultierende Endgröße</span></div>'
-       + '</div>'
-       + '<div class="now-split">davon distaler Femur <b>'+sNow.dFem.toFixed(1)
-       + ' cm</b> · proximale Tibia <b>'+sNow.dTib.toFixed(1)+' cm</b></div>';
+    // quest === 'tgt' — Zeitpunkt für eine gewünschte Endgröße
+    const tgt    = +$('target').value;
+    const minAge = +$('minage').value;
+    const need   = adultHt - tgt;
+    const effMin = Math.max(minAge, age0);
+    const maxSave= savings(sex, adultHt, effMin).total;
+    const t      = solve(sex, adultHt, need, effMin);
+    const tHi    = solve(sex, adultHt, need - sd, effMin);
+    const tLo    = solve(sex, adultHt, need + sd, effMin);
+    tMark = t; needLine = need;
 
-    // Einordnung gegenüber der Zielgröße
-    let nv;
+    r = '<div class="out-lab">Erforderliche Reduktion auf '+tgt.toFixed(1)+' cm: <b style="color:var(--ink)">'
+      + (need>0 ? need.toFixed(1)+' cm' : 'keine')+'</b></div>';
+
     if(need <= 0){
-      nv = 'Die Zielgröße von '+tgt.toFixed(1)+' cm liegt bereits über der Prognose — '
-         + 'ein Eingriff würde '+Math.abs(htNow-tgt).toFixed(1)+' cm unter das Ziel führen.';
-    } else if(sNow.total < need - 0.05){
-      nv = '<b>Das Ziel von '+tgt.toFixed(1)+' cm ist auch sofort nicht mehr erreichbar</b> — '
-         + 'es fehlen '+(need-sNow.total).toFixed(1)+' cm. Niedrigste jetzt noch erreichbare Endgröße: '
-         + htNow.toFixed(1)+' cm.';
-    } else if(sNow.total > need + 0.05){
-      const res = sNow.total - need;
-      nv = 'Sofort operiert würde das Ziel um <b>'+res.toFixed(1)+' cm unterschritten</b>'
-         + (t!==null
-             ? ' — Zeit bleibt bis ' + (mode==='dob' && dob
-                 ? 'zum '+fmtDate(ageToDate(dob,t))+'.'
-                 : fmtAge(t))
-             : '.');
+      r += '<div class="out-pair"><div><span class="out-val">—</span>'
+         + '<span class="out-cap">kein Eingriff indiziert</span></div></div>'
+         + '<div class="out-verdict">Die Prognose liegt bereits '+Math.abs(need).toFixed(1)
+         + ' cm unter der Zielgröße.</div>';
+    } else if(t === null){
+      r += '<div class="out-pair"><div><span class="out-val blocked sm">nicht erreichbar</span>'
+         + '<span class="out-cap">'
+         + (effMin > minAge + 0.01 ? 'auch bei sofortigem Eingriff' : 'auch mit '+minAge.toFixed(1)+' Jahren')
+         + '</span></div></div>'
+         + '<div class="out-detail">Höchstens <b>'+maxSave.toFixed(1)+' cm</b> zu gewinnen, '
+         + 'niedrigste erreichbare Endgröße <b>'+(adultHt-maxSave).toFixed(1)+' cm</b> — es fehlen '
+         + (need-maxSave).toFixed(1)+' cm.</div>';
     } else {
-      nv = '<b>Der Zeitpunkt ist jetzt.</b> Die sofort erreichbare Reduktion entspricht genau dem Bedarf.';
-    }
-    n += '<div class="now-verdict">'+nv+'</div>';
-
-    if(age0 < minAge){
-      n += '<div class="now-verdict" style="color:var(--alert);border-top-color:var(--alert)">'
-         + 'Dieses Alter liegt vor dem eingestellten frühesten Eingriff ('+minAge.toFixed(1)
-         + ' Jahre). Der Wert zeigt das rechnerische Maximum, nicht eine Empfehlung.</div>';
+      const whenBig = (mode==='dob' && dob) ? fmtDate(ageToDate(dob,t)) : fmtAge(t);
+      r += '<div class="out-pair">'
+         + '<div><span class="out-val'+(mode==='dob'?' sm':'')+'">'+whenBig+'</span>'
+         + '<span class="out-cap">Operationszeitpunkt'
+         + (mode==='dob' && dob ? ' · '+fmtAge(t) : '')+'</span></div>'
+         + '</div>';
+      if(tLo && tHi){
+        r += '<div class="out-detail">Bei ± '+sd.toFixed(1)+' cm Prognoseunsicherheit: <b>'
+           + ((mode==='dob' && dob) ? fmtDate(ageToDate(dob,tLo))+'</b> bis <b>'+fmtDate(ageToDate(dob,tHi))
+                                    : fmtAge(tLo)+'</b> bis <b>'+fmtAge(tHi))+'</b></div>';
+      } else {
+        r += '<div class="out-detail">Das Unsicherheitsfenster reicht über den Suchbereich hinaus.</div>';
+      }
     }
   }
-  $('now').innerHTML = n;
+  $('res').innerHTML = r;
 
-  // ── Tabelle ───────────────────────────────────────────────────
+  // ── Warnhinweise ────────────────────────────────────────
+  let f = '';
+  if(tMark !== null && tMark < d.end){
+    const htRes = adultHt - savings(sex, adultHt, tMark).total;
+    const ratio = (SITTING_RATIO[sex]*adultHt)/htRes;
+    if(ratio > 0.545) f += '<div class="flag">Sitzhöhen-Index steigt auf '+ratio.toFixed(3)
+      +' (normal ≈ '+SITTING_RATIO[sex].toFixed(3)+'). Deutliche Disproportion zwischen Rumpf und Beinen zu erwarten.</div>';
+    if(tMark > d.end - 1) f += '<div class="flag">Der Zeitpunkt liegt nah am Wachstumsabschluss; das Restwachstum ist hier sehr gering und der Fehler entsprechend groß.</div>';
+  }
+  $('flags').innerHTML = f;
+
+  // ── Tabelle ─────────────────────────────────────────────
+  const lo = Math.min(10, Math.floor(age0*2)/2);
   const rows = [];
-  for(let a = minAge; a <= d.end + 0.001; a += 0.5) rows.push(a);
+  for(let a = lo; a <= d.end + 0.001; a += 0.5) rows.push(a);
   $('tbl').querySelector('tbody').innerHTML = rows.map(a=>{
     const s = savings(sex, adultHt, a);
-    const hit = t!==null && Math.abs(a-t) < 0.25;
-    const cls = [hit?'hit':'', a < age0-0.25 ? 'past':'', Math.abs(a-age0)<=0.25 ? 'today':'']
-                .filter(Boolean).join(' ');
+    const cls = [
+      tMark!==null && Math.abs(a-tMark) < 0.25 ? 'hit' : '',
+      a < age0-0.25 ? 'past' : '',
+      Math.abs(a-age0) <= 0.25 ? 'today' : ''
+    ].filter(Boolean).join(' ');
     return '<tr class="'+cls+'"><td>'+a.toFixed(1)+'</td><td>'+s.ht.toFixed(0)
       +'</td><td>'+s.dFem.toFixed(1)+'</td><td>'+s.dTib.toFixed(1)+'</td><td>'+s.total.toFixed(1)
       +'</td><td>'+(adultHt-s.total).toFixed(1)+'</td></tr>';
   }).join('');
 
-  // ── Warnhinweise ──────────────────────────────────────────────
-  let f = '';
-  if(t !== null && need > 0){
-    const r = (SITTING_RATIO[sex]*adultHt)/(adultHt-need);
-    if(r > 0.545) f += '<div class="flag">Sitzhöhen-Index steigt auf '+r.toFixed(3)
-      +' (normal ≈ '+SITTING_RATIO[sex].toFixed(3)+'). Deutliche Disproportion zwischen Rumpf und Beinen zu erwarten.</div>';
-    if(t < age0) f += '<div class="flag">Der errechnete Zeitpunkt liegt vor dem aktuellen Alter — das Fenster ist bereits überschritten.</div>';
-    if(t > d.end - 1) f += '<div class="flag">Der Zeitpunkt liegt nah am Wachstumsabschluss; das Restwachstum ist hier sehr gering und der Fehler entsprechend groß.</div>';
-  }
-  $('flags').innerHTML = f;
-
-  drawChart(sex, adultHt, need, minAge, t, tLo, tHi, age0);
+  drawChart(sex, adultHt, needLine, tMark, age0);
 }
 
-// ── Diagramm ────────────────────────────────────────────────────
-function drawChart(sex, adultHt, need, minAge, t, tLo, tHi, age0){
+// ── Diagramm ──────────────────────────────────────────────
+function drawChart(sex, adultHt, need, tMark, age0){
   const W=380,H=230, L=36,R=8,T=12,B=28;
   const d = M[sex];
-  const x0=minAge, x1=d.end;
-  const yMax = Math.max(savings(sex,adultHt,minAge).total, need) * 1.12;
+  const x0 = Math.min(10, Math.floor(age0*2)/2), x1 = d.end;
+  if(x1 <= x0){ $('chart').innerHTML = ''; return; }
+  const cands = [savings(sex,adultHt,x0).total];
+  if(need !== null && need > 0) cands.push(need);
+  const yMax = Math.max(...cands) * 1.12 || 1;
   const X = a => L + (a-x0)/(x1-x0)*(W-L-R);
-  const Y = v => T + (1 - v/yMax)*(H-T-B);
+  const Y = v => T + (1 - Math.min(v,yMax)/yMax)*(H-T-B);
 
   let g='';
-  // Raster
   for(let a=Math.ceil(x0); a<=x1; a+=1){
     g += `<line x1="${X(a)}" y1="${T}" x2="${X(a)}" y2="${H-B}" stroke="var(--grid)" stroke-width="1"/>`;
     g += `<text class="axis-label" x="${X(a)}" y="${H-B+14}" text-anchor="middle">${a}</text>`;
@@ -568,50 +610,51 @@ function drawChart(sex, adultHt, need, minAge, t, tLo, tHi, age0){
   g += `<text class="axis-label" x="${L-6}" y="${T-2}" text-anchor="end">cm</text>`;
   g += `<text class="axis-label" x="${W-R}" y="${H-B+24}" text-anchor="end">Operationsalter (Jahre)</text>`;
 
-  // Unsicherheitsfenster
-  if(t!==null && tLo && tHi){
-    g += `<rect x="${X(tLo)}" y="${T}" width="${X(tHi)-X(tLo)}" height="${H-T-B}" fill="var(--signal-soft)"/>`;
-  }
-  // Bedarfslinie
-  if(need>0 && need<=yMax){
+  // Bedarfslinie nur im Zielgrößen-Modus
+  if(need !== null && need > 0 && need <= yMax){
     g += `<line x1="${L}" y1="${Y(need)}" x2="${W-R}" y2="${Y(need)}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3"/>`;
     g += `<text class="axis-label" x="${L+4}" y="${Y(need)-5}" fill="var(--ink)">Bedarf ${need.toFixed(1)} cm</text>`;
   }
+
   // Kurve
   let pts=[];
   for(let a=x0; a<=x1+0.001; a+=0.1) pts.push(`${X(a).toFixed(1)},${Y(savings(sex,adultHt,a).total).toFixed(1)}`);
   g += `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--signal)" stroke-width="2.2" stroke-linejoin="round"/>`;
 
-  // "Heute": senkrechte Marke beim aktuellen Alter
+  // "heute"
   if(age0 >= x0 && age0 <= x1){
     const sNow = savings(sex,adultHt,age0).total;
     g += `<line x1="${X(age0)}" y1="${T}" x2="${X(age0)}" y2="${H-B}" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="2 2"/>`;
     g += `<circle cx="${X(age0)}" cy="${Y(sNow)}" r="3.5" fill="var(--ink)"/>`;
     const anchor = X(age0) > W-70 ? 'end' : 'start';
-    const dx = anchor==='end' ? -5 : 5;
-    g += `<text class="axis-label" x="${X(age0)+dx}" y="${T+10}" fill="var(--ink)" text-anchor="${anchor}">heute ${sNow.toFixed(1)} cm</text>`;
+    g += `<text class="axis-label" x="${X(age0)+(anchor==='end'?-5:5)}" y="${T+10}" fill="var(--ink)" text-anchor="${anchor}">heute ${sNow.toFixed(1)} cm</text>`;
   }
 
-  // Schnittpunkt
-  if(t!==null){
-    g += `<line x1="${X(t)}" y1="${Y(need)}" x2="${X(t)}" y2="${H-B}" stroke="var(--signal)" stroke-width="1.5"/>`;
-    g += `<circle cx="${X(t)}" cy="${Y(need)}" r="4.5" fill="var(--signal)"/>`;
-    g += `<circle cx="${X(t)}" cy="${Y(need)}" r="8" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.4"/>`;
+  // Gewählter Zeitpunkt
+  if(tMark !== null && tMark >= x0 && tMark <= x1){
+    const sv = savings(sex,adultHt,tMark).total;
+    g += `<line x1="${X(tMark)}" y1="${Y(sv)}" x2="${X(tMark)}" y2="${H-B}" stroke="var(--signal)" stroke-width="1.5"/>`;
+    g += `<circle cx="${X(tMark)}" cy="${Y(sv)}" r="4.5" fill="var(--signal)"/>`;
+    g += `<circle cx="${X(tMark)}" cy="${Y(sv)}" r="8" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.4"/>`;
   }
   $('chart').innerHTML = `<title>Erreichbare Höhenreduktion nach Operationsalter</title>`+g;
 }
 
-// Untersuchungsdatum auf heute vorbelegen, Geburtsdatum passend zum Startalter
+// Datumsfelder vorbelegen
 (function initDates(){
   const today = new Date();
-  const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
-  $('exam').value = iso(today);
-  $('dob').value  = iso(new Date(today.getTime() - 11.0*YEAR*DAY));
+  $('exam').value   = isoDate(today);
+  $('dob').value    = isoDate(new Date(today.getTime() - 11.0*YEAR*DAY));
+  $('opdate').value = isoDate(new Date(today.getTime() + 1.0*YEAR*DAY));
 })();
 
-inputs.forEach(id => $(id).addEventListener('input', run));
+['sex','age','height','sd','dob','exam','opage','opdate','target','minage']
+  .forEach(id => $(id).addEventListener('input', run));
 $('modeAge').addEventListener('click', () => setMode('age'));
 $('modeDob').addEventListener('click', () => setMode('dob'));
+$('qNow').addEventListener('click', () => setQuest('now'));
+$('qAge').addEventListener('click', () => setQuest('at'));
+$('qTgt').addEventListener('click', () => setQuest('tgt'));
 run();
 
 if('serviceWorker' in navigator){
