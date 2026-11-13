@@ -12,6 +12,8 @@ Die Oberfläche besteht aus zwei umrandeten Blöcken:
 
 **1 · Prognose ohne Eingriff** — aus Geschlecht, Alter (oder Geburtsdatum)
 und aktueller Körpergröße wird die zu erwartende Endgröße berechnet.
+Alter werden in Jahren und Monaten eingegeben; Monatsangaben über 11
+laufen korrekt über.
 
 **2 · Epiphyseodese** — hier wird zwischen drei Fragen umgeschaltet:
 
