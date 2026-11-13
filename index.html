@@ -41,13 +41,25 @@ body{
 h1{font-size:21px;font-weight:600;letter-spacing:-0.01em;margin:0 0 2px}
 .sub{color:var(--muted);font-size:13.5px;margin:0 0 6px}
 .org{
-  font-size:13px;
-  color:var(--ink);
-  font-weight:500;
-  margin:0 0 20px;
-  padding-top:7px;
+  /* Startwert; die genaue Größe setzt fitOrg() nach der Breite des Kastens */
+  font-size:clamp(11px, 3.2vw, 17px);
+  color:var(--signal);
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+  padding-top:8px;
   border-top:1px solid var(--rule);
+  white-space:nowrap;
 }
+.org-mail{
+  /* so bemessen, dass die Adresse auch auf schmalen Geräten in eine
+     Zeile passt und nicht mitten im Wort umbricht */
+  font-size:clamp(11.5px, 3.3vw, 13.5px);
+  color:var(--muted);
+  margin:3px 0 20px;
+}
+.org-mail a{color:var(--signal);text-decoration:none;white-space:nowrap}
+.org-mail a:hover{text-decoration:underline}
 
 /* ── Blöcke ───────────────────────────────────────────── */
 .card{
@@ -226,6 +238,7 @@ footer a:hover{text-decoration:underline}
 <h1>Hochwuchstherapie</h1>
 <p class="sub">Wachstumsdämpfung bei konstitutionellem Hochwuchs — komplette Epiphyseodese von distalem Femur und proximaler Tibia, Multiplier-Methode nach Paley.</p>
 <p class="org">Kinderorthopädie im Emil-von-Behring-Krankenhaus</p>
+<p class="org-mail">Bei Anfragen: <a href="mailto:beb-kinderorthopaedie@helios-gesundheit.de">beb-kinderorthopaedie@helios-gesundheit.de</a></p>
 
 <!-- ══ Block 1 ══════════════════════════════════════════ -->
 <section class="card">
@@ -338,8 +351,8 @@ Rechenhilfe, kein Ersatz für Ganzbeinaufnahme, Skelettalterbestimmung und klini
 </div>
 
 <footer>
-  <b>Kinderorthopädie im Emil-von-Behring-Krankenhaus</b><br>
-  Rückfragen: <a href="mailto:beb-kinderorthopaedie@helios-gesundheit.de">beb-kinderorthopaedie@helios-gesundheit.de</a><br>
+  <b>Kinderorthopädie im Emil-von-Behring-Krankenhaus</b> ·
+  <a href="mailto:beb-kinderorthopaedie@helios-gesundheit.de">beb-kinderorthopaedie@helios-gesundheit.de</a><br>
   <span class="verline">Fassung <b id="ver">—</b> · <a href="#" id="refresh">Aktualisierung erzwingen</a></span>
 </footer>
 
@@ -753,6 +766,28 @@ document.querySelectorAll('input[type="number"]').forEach(el => {
   el.addEventListener('blur',  () => { fresh = false; });
 });
 
+// ── Klinikzeile auf die volle Zeilenbreite bringen ───────────────
+// Die Zeile soll von Rand zu Rand stehen, auf jedem Gerät. Statt fester
+// Stufen wird gemessen: Textbreite bei bekannter Schriftgröße, daraus die
+// Größe, die den Kasten genau füllt (nach oben auf 19 px begrenzt).
+function fitOrg(){
+  const el = document.querySelector('.org');
+  if(!el) return;
+  const probe = 16;
+  el.style.fontSize = probe + 'px';
+  const platz = el.clientWidth;
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  const breite = r.getBoundingClientRect().width;
+  if(!breite || !platz) return;
+  const size = Math.min(19, Math.max(10.5, probe * (platz / breite) * 0.995));
+  el.style.fontSize = size.toFixed(2) + 'px';
+}
+fitOrg();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitOrg);
+addEventListener('resize', fitOrg);
+addEventListener('orientationchange', () => setTimeout(fitOrg, 250));
+
 // ── Feld über der Bildschirmtastatur halten ──────────────────────
 // Auf dem Telefon schiebt sich die Tastatur über die untere Bildschirm-
 // hälfte. Liegt das angetippte Feld darunter, wird nur so weit gescrollt,
@@ -796,7 +831,7 @@ if(window.visualViewport){
 }
 
 // ── Fassung anzeigen und selbsttätig aktualisieren ───────────────
-const APP_VERSION = 'v10';
+const APP_VERSION = 'v11';
 $('ver').textContent = APP_VERSION;
 
 if('serviceWorker' in navigator){
