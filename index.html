@@ -121,6 +121,39 @@ input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;bord
 .age-big.blocked{color:var(--alert)}
 .window{font-size:14px;color:var(--muted)}
 
+/* Sofort-Eingriff */
+.now{
+  border:1px solid var(--rule);
+  border-left:3px solid var(--signal);
+  border-radius:3px;
+  background:#fff;
+  padding:14px 16px 13px;
+  margin:16px 0 4px;
+}
+.now-head{
+  font-size:12px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:9px;
+}
+.now-sub{text-transform:none;letter-spacing:0}
+.now-sub b{color:var(--ink);font-weight:500}
+.now-pair{display:flex;gap:34px;flex-wrap:wrap}
+.now-val{
+  font-size:30px;
+  font-weight:600;
+  letter-spacing:-0.02em;
+  line-height:1.1;
+  color:var(--signal);
+  display:block;
+}
+.now-val.blocked{color:var(--alert)}
+.now-cap{font-size:12.5px;color:var(--muted);display:block;margin-top:1px}
+.now-split{font-size:13px;color:var(--muted);margin-top:11px}
+.now-split b{color:var(--ink);font-weight:500}
+.now-verdict{font-size:13.5px;margin-top:9px;padding-top:9px;border-top:1px solid var(--grid)}
+
 svg{width:100%;height:auto;display:block;margin:8px 0 4px;overflow:visible}
 .axis-label{font-size:11px;fill:var(--muted)}
 
@@ -132,6 +165,9 @@ th{
 th:first-child,td:first-child{text-align:left}
 td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right}
 tr.hit td{background:var(--signal-soft);font-weight:500}
+tr.past td{color:var(--muted);opacity:0.55}
+tr.today td{box-shadow:inset 0 2px 0 var(--ink),inset 0 -2px 0 var(--ink)}
+tr.today td:first-child{font-weight:600}
 
 .note{
   font-size:12.5px;
@@ -159,7 +195,7 @@ h2{font-size:14px;font-weight:600;margin:30px 0 2px}
 <body>
 
 <h1>Epiphyseodese-Timing</h1>
-<p class="sub">Wann muss die komplette Epiphyseodese von distalem Femur und proximaler Tibia erfolgen, um eine bestimmte Endgröße zu erreichen? Multiplier-Methode nach Paley.</p>
+<p class="sub">Wann muss die komplette Epiphyseodese von distalem Femur und proximaler Tibia erfolgen, um eine bestimmte Endgröße zu erreichen — und wie viel ließe sich bei sofortigem Eingriff noch einsparen? Multiplier-Methode nach Paley.</p>
 
 <fieldset>
   <div class="modes" role="group" aria-label="Wie soll das Alter bestimmt werden?">
@@ -207,6 +243,8 @@ h2{font-size:14px;font-weight:600;margin:30px 0 2px}
 <div class="readout">
   <div class="verdict" id="verdict"></div>
 </div>
+
+<div class="now" id="now"></div>
 
 <svg id="chart" viewBox="0 0 380 230" role="img" aria-labelledby="charttitle">
   <title id="charttitle">Erreichbare Höhenreduktion in Abhängigkeit vom Operationsalter</title>
@@ -343,6 +381,7 @@ function run(){
       $('tbl').querySelector('tbody').innerHTML = '';
       $('flags').innerHTML = '';
       $('chart').innerHTML = '';
+      $('now').innerHTML = '';
       return;
     }
   }
@@ -355,11 +394,12 @@ function run(){
 
   const adultHt = ht0 * interp(d.ht, age0);
   const need = adultHt - tgt;
-  const maxSave = savings(sex, adultHt, Math.max(minAge, age0)).total;
+  const effMin  = Math.max(minAge, age0);   // frühestmöglicher Eingriff: nicht vor heute
+  const maxSave = savings(sex, adultHt, effMin).total;
 
-  const t   = solve(sex, adultHt, need, Math.max(minAge, age0));
-  const tHi = solve(sex, adultHt, need - sd, Math.max(minAge, age0)); // weniger nötig → später
-  const tLo = solve(sex, adultHt, need + sd, Math.max(minAge, age0)); // mehr nötig → früher
+  const t   = solve(sex, adultHt, need, effMin);
+  const tHi = solve(sex, adultHt, need - sd, effMin); // weniger nötig → später
+  const tLo = solve(sex, adultHt, need + sd, effMin); // mehr nötig → früher
 
   // ── Textausgabe ───────────────────────────────────────────────
   let v = "Prognostizierte Endgröße ohne Eingriff: <b>"+adultHt.toFixed(1)+" cm</b>. "
@@ -369,7 +409,10 @@ function run(){
     v += '<span class="age-big">—</span><span class="window">Die Zielgröße liegt bereits über der Prognose. Kein Eingriff indiziert.</span>';
   } else if(t === null){
     v += '<span class="age-big blocked">nicht erreichbar</span>'
-       + '<span class="window">Selbst bei Eingriff mit '+minAge.toFixed(1)+' Jahren sind nur <b>'
+       + '<span class="window">'
+       + (effMin > minAge + 0.01
+            ? 'Auch bei sofortigem Eingriff sind nur <b>'
+            : 'Selbst bei Eingriff mit '+minAge.toFixed(1)+' Jahren sind nur <b>')
        + maxSave.toFixed(1)+' cm</b> zu gewinnen. Erreichbare Endgröße: <b>'
        + (adultHt-maxSave).toFixed(1)+' cm</b>.</span>';
   } else {
@@ -385,13 +428,69 @@ function run(){
   }
   $('verdict').innerHTML = v;
 
+  // ── Sofortiger Eingriff beim aktuellen Alter ──────────────────
+  const sNow   = savings(sex, adultHt, age0);
+  const htNow  = adultHt - sNow.total;        // Endgröße bei Epiphyseodese jetzt
+  const exam   = parseDate($('exam').value);
+
+  let n = '<div class="now-head">Epiphyseodese sofort<span class="now-sub"> &nbsp;·&nbsp; '
+        + (mode==='dob' && exam ? fmtDate(exam)+', ' : '')
+        + '<b>'+fmtAge(age0)+'</b>, '+ht0.toFixed(1)+' cm</span></div>';
+
+  if(age0 >= d.end){
+    n += '<div class="now-pair"><div><span class="now-val blocked">—</span>'
+       + '<span class="now-cap">Wachstum abgeschlossen</span></div></div>'
+       + '<div class="now-verdict">Mit '+fmtAge(age0)+' ist knienah kein Restwachstum mehr vorhanden, '
+       + 'das sich beeinflussen ließe.</div>';
+  } else {
+    n += '<div class="now-pair">'
+       + '<div><span class="now-val">−'+sNow.total.toFixed(1)+' cm</span>'
+       + '<span class="now-cap">maximale Reduktion</span></div>'
+       + '<div><span class="now-val">'+htNow.toFixed(1)+' cm</span>'
+       + '<span class="now-cap">resultierende Endgröße</span></div>'
+       + '</div>'
+       + '<div class="now-split">davon distaler Femur <b>'+sNow.dFem.toFixed(1)
+       + ' cm</b> · proximale Tibia <b>'+sNow.dTib.toFixed(1)+' cm</b></div>';
+
+    // Einordnung gegenüber der Zielgröße
+    let nv;
+    if(need <= 0){
+      nv = 'Die Zielgröße von '+tgt.toFixed(1)+' cm liegt bereits über der Prognose — '
+         + 'ein Eingriff würde '+Math.abs(htNow-tgt).toFixed(1)+' cm unter das Ziel führen.';
+    } else if(sNow.total < need - 0.05){
+      nv = '<b>Das Ziel von '+tgt.toFixed(1)+' cm ist auch sofort nicht mehr erreichbar</b> — '
+         + 'es fehlen '+(need-sNow.total).toFixed(1)+' cm. Niedrigste jetzt noch erreichbare Endgröße: '
+         + htNow.toFixed(1)+' cm.';
+    } else if(sNow.total > need + 0.05){
+      const res = sNow.total - need;
+      nv = 'Sofort operiert würde das Ziel um <b>'+res.toFixed(1)+' cm unterschritten</b>'
+         + (t!==null
+             ? ' — Zeit bleibt bis ' + (mode==='dob' && dob
+                 ? 'zum '+fmtDate(ageToDate(dob,t))+'.'
+                 : fmtAge(t))
+             : '.');
+    } else {
+      nv = '<b>Der Zeitpunkt ist jetzt.</b> Die sofort erreichbare Reduktion entspricht genau dem Bedarf.';
+    }
+    n += '<div class="now-verdict">'+nv+'</div>';
+
+    if(age0 < minAge){
+      n += '<div class="now-verdict" style="color:var(--alert);border-top-color:var(--alert)">'
+         + 'Dieses Alter liegt vor dem eingestellten frühesten Eingriff ('+minAge.toFixed(1)
+         + ' Jahre). Der Wert zeigt das rechnerische Maximum, nicht eine Empfehlung.</div>';
+    }
+  }
+  $('now').innerHTML = n;
+
   // ── Tabelle ───────────────────────────────────────────────────
   const rows = [];
   for(let a = minAge; a <= d.end + 0.001; a += 0.5) rows.push(a);
   $('tbl').querySelector('tbody').innerHTML = rows.map(a=>{
     const s = savings(sex, adultHt, a);
     const hit = t!==null && Math.abs(a-t) < 0.25;
-    return '<tr class="'+(hit?'hit':'')+'"><td>'+a.toFixed(1)+'</td><td>'+s.ht.toFixed(0)
+    const cls = [hit?'hit':'', a < age0-0.25 ? 'past':'', Math.abs(a-age0)<=0.25 ? 'today':'']
+                .filter(Boolean).join(' ');
+    return '<tr class="'+cls+'"><td>'+a.toFixed(1)+'</td><td>'+s.ht.toFixed(0)
       +'</td><td>'+s.dFem.toFixed(1)+'</td><td>'+s.dTib.toFixed(1)+'</td><td>'+s.total.toFixed(1)
       +'</td><td>'+(adultHt-s.total).toFixed(1)+'</td></tr>';
   }).join('');
@@ -407,11 +506,11 @@ function run(){
   }
   $('flags').innerHTML = f;
 
-  drawChart(sex, adultHt, need, minAge, t, tLo, tHi);
+  drawChart(sex, adultHt, need, minAge, t, tLo, tHi, age0);
 }
 
 // ── Diagramm ────────────────────────────────────────────────────
-function drawChart(sex, adultHt, need, minAge, t, tLo, tHi){
+function drawChart(sex, adultHt, need, minAge, t, tLo, tHi, age0){
   const W=380,H=230, L=36,R=8,T=12,B=28;
   const d = M[sex];
   const x0=minAge, x1=d.end;
@@ -446,6 +545,16 @@ function drawChart(sex, adultHt, need, minAge, t, tLo, tHi){
   let pts=[];
   for(let a=x0; a<=x1+0.001; a+=0.1) pts.push(`${X(a).toFixed(1)},${Y(savings(sex,adultHt,a).total).toFixed(1)}`);
   g += `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--signal)" stroke-width="2.2" stroke-linejoin="round"/>`;
+
+  // "Heute": senkrechte Marke beim aktuellen Alter
+  if(age0 >= x0 && age0 <= x1){
+    const sNow = savings(sex,adultHt,age0).total;
+    g += `<line x1="${X(age0)}" y1="${T}" x2="${X(age0)}" y2="${H-B}" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="2 2"/>`;
+    g += `<circle cx="${X(age0)}" cy="${Y(sNow)}" r="3.5" fill="var(--ink)"/>`;
+    const anchor = X(age0) > W-70 ? 'end' : 'start';
+    const dx = anchor==='end' ? -5 : 5;
+    g += `<text class="axis-label" x="${X(age0)+dx}" y="${T+10}" fill="var(--ink)" text-anchor="${anchor}">heute ${sNow.toFixed(1)} cm</text>`;
+  }
 
   // Schnittpunkt
   if(t!==null){
