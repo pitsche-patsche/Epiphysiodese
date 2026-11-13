@@ -734,6 +734,18 @@ $('qAge').addEventListener('click', () => setQuest('at'));
 $('qTgt').addEventListener('click', () => setQuest('tgt'));
 run();
 
+// Beim Antippen eines Zahlenfeldes den Inhalt markieren, sodass die erste
+// getippte Ziffer ihn ersetzt. iOS hebt die Markierung bei 'focus' sofort
+// wieder auf, deshalb zusätzlich beim darauffolgenden 'click' — aber nur
+// einmal je Fokussierung, damit gezieltes Setzen des Cursors möglich bleibt.
+document.querySelectorAll('input[type="number"]').forEach(el => {
+  let fresh = false;
+  const sel = () => { try { el.select(); } catch(e) {} };
+  el.addEventListener('focus', () => { fresh = true; sel(); });
+  el.addEventListener('click', () => { if(fresh){ fresh = false; sel(); } });
+  el.addEventListener('blur',  () => { fresh = false; });
+});
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
