@@ -86,13 +86,17 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
 input,select{
   width:100%;
   font:inherit;
+  /* Mindestens 16px, sonst zoomt iOS beim Antippen in die Seite hinein
+     und schiebt das Feld unter die Tastatur. */
+  font-size:17px;
   font-variant-numeric:tabular-nums;
-  padding:9px 10px;
+  padding:10px;
   border:1px solid var(--rule);
   border-radius:3px;
   background:#fff;
   color:var(--ink);
 }
+input[type="number"]{text-align:center;font-weight:500;letter-spacing:0.01em}
 input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:var(--signal)}
 
 .modes{
@@ -127,7 +131,7 @@ input:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;bord
 
 /* Alterseingabe in Jahren und Monaten */
 .agein{display:flex;align-items:center;gap:5px}
-.agein input{width:3.9em;text-align:right;padding-left:6px;padding-right:6px}
+.agein input{width:3.4em;padding-left:4px;padding-right:4px}
 .agein span{font-size:13px;color:var(--muted);margin-right:5px;white-space:nowrap}
 
 .derived{grid-column:1/-1;font-size:13.5px;color:var(--muted);padding:2px 0 0}
@@ -749,8 +753,50 @@ document.querySelectorAll('input[type="number"]').forEach(el => {
   el.addEventListener('blur',  () => { fresh = false; });
 });
 
+// ── Feld über der Bildschirmtastatur halten ──────────────────────
+// Auf dem Telefon schiebt sich die Tastatur über die untere Bildschirm-
+// hälfte. Liegt das angetippte Feld darunter, wird nur so weit gescrollt,
+// dass es mitsamt seiner Beschriftung frei steht.
+function keepVisible(el){
+  if(!el) return;
+  const vv = window.visualViewport;
+  const box = (el.closest('.agein') || el).getBoundingClientRect();
+  const label = el.closest('div')?.querySelector('label');
+  const top = label ? label.getBoundingClientRect().top : box.top;
+
+  if(!vv){ el.scrollIntoView({block:'center', behavior:'smooth'}); return; }
+  const sichtbarUnten = vv.offsetTop + vv.height;
+  const luft = 16;
+
+  if(box.bottom > sichtbarUnten - luft){
+    // so weit nach unten scrollen, dass das Feld knapp über der Tastatur sitzt
+    let delta = box.bottom - (sichtbarUnten - luft);
+    // nicht so weit, dass die Beschriftung oben aus dem Bild läuft
+    delta = Math.min(delta, Math.max(0, top - vv.offsetTop - luft));
+    if(delta > 2) window.scrollBy({top: delta, behavior:'smooth'});
+  }
+}
+
+let lastFocused = null;
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('focus', () => {
+    lastFocused = el;
+    // Fällt die Tastatur nicht auf (Rechner), greift dieser Nachlauf
+    setTimeout(() => { if(document.activeElement === el) keepVisible(el); }, 320);
+  });
+  el.addEventListener('blur', () => { if(lastFocused === el) lastFocused = null; });
+});
+
+// Die Tastatur verkleinert den sichtbaren Bereich — das ist der verlässliche
+// Zeitpunkt, um nachzuschieben.
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', () => {
+    if(lastFocused && document.activeElement === lastFocused) keepVisible(lastFocused);
+  });
+}
+
 // ── Fassung anzeigen und selbsttätig aktualisieren ───────────────
-const APP_VERSION = 'v9';
+const APP_VERSION = 'v10';
 $('ver').textContent = APP_VERSION;
 
 if('serviceWorker' in navigator){
